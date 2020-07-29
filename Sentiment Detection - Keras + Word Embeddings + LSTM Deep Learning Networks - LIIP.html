@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+<!--
+🤔 You look like a curious web expert.
+💁 That’s good, we’re hiring!
+👉 https://www.liip.ch/jobs
+-->
+<head>
+  <script>
+        var dataLayer = window.dataLayer || [];
+    dataLayer.push({"websiteLanguage":"en","pageType":"blogpost","blogpostExpertises":"data","blogpostTopics":"open-source, technology","blogpostTags":"sentiment analysis, machine learning, keras, deep-learning, data-services"});
+  </script>
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-KTPM65V');</script>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="content-language" content="en">
+  <link rel="icon" type="image/x-icon" href="/assets/dist/favicon.1553239427.ico">
+  <title>Sentiment detection with Keras, word embeddings and LSTM deep learning networks &middot; Blog &middot; Liip</title>
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Sentiment detection with Keras, word embeddings and LSTM deep learning networks &middot; Blog &middot; Liip">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Liip">
+    <meta property="og:url" content="https://www.liip.ch/en/blog/sentiment-detection-with-keras-word-embeddings-and-lstm-deep-learning-networks">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:image" content="https://liip.rokka.io/www_socialmedia/674f1c/clamp-clips-close-up-160824.jpg">
+    <meta property="og:image:width" content="5258">
+    <meta property="og:image:height" content="2669">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@liip">
+    <meta name="twitter:title" content="Sentiment detection with Keras, word embeddings and LSTM deep learning networks &middot; Blog &middot; Liip">
+    <meta name="twitter:image" content="https://liip.rokka.io/www_socialmedia/674f1c/clamp-clips-close-up-160824.jpg">
+    <link rel="canonical" href="https://www.liip.ch/en/blog/sentiment-detection-with-keras-word-embeddings-and-lstm-deep-learning-networks">
+    <link rel="alternate" type="application/rss+xml" title="Liip Blog" href="https://www.liip.ch/en/feed">
+  <link rel="stylesheet" href="/assets/dist/common.1553239427.css">    <link rel="preload" href="/assets/dist/Etica-Book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/assets/dist/Etica-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="/assets/dist/Etica-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+</head>
+
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KTPM65V"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+<div id="default-navbar" class="navbar navbar--sticky">
+  <div class="navbar__body">
+    <a href="https://www.liip.ch/en" class="navbar__brand" title="Liip">
+  <div class="logo">
+    <svg class="logo__L" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32.7 49">
+      <path d="M0.1,46.8h29.6v-9.7H11.2V2.5H0.4v44.3H0.1z M0.1,46.8h29.6v-9.7H11.2V2.5H0.4v44.3H0.1z"></path>
+    </svg>
+    <svg class="logo__II" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 63.8 49">
+      <path d="M13.5,48.3L35.2,5.1l-9.6-4.9L3.8,43.4L13.5,48.3 M38.6,48.3L60.4,5.1l-9.7-4.9L28.9,43.4
+      L38.6,48.3"></path>
+    </svg>
+    <svg class="logo__P" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35.9 49">
+      <path d="M3.4,2.5v44.3h10.8V31h6.6c9.8,0,15-7,15-14.2c0-7.3-5.3-14.2-15-14.2H3.4L3.4,2.5z M14.3,12.3
+      h6.1c3,0,4.7,2.2,4.7,4.5s-1.7,4.5-4.7,4.5h-6.1V12.3L14.3,12.3z"></path>
+    </svg>
+  </div>
+</a>
+
+    <button class="navbar__toggle btn btn--bare" data-toggle="collapse" data-target=".navbar__collapse" title="Toggle navigation">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="navbar-hamburger icon">
+        <rect x="4" y="5" width="16" height="2" class="navbar-hamburger__first"/>
+        <rect x="4" y="11" width="16" height="2" class="navbar-hamburger__second"/>
+        <rect x="4" y="17" width="16" height="2" class="navbar-hamburger__third"/>
+      </svg>
+    </button>
+
+    <nav class="navbar__collapse collapse">
+      <ul class="navbar-menu">
+                                <li>
+          <a href="https://www.liip.ch/en/work" class="navbar-menu__link">
+            Work          </a>
+        </li>
+                        <li>
+          <a href="https://www.liip.ch/en/team" class="navbar-menu__link">
+            Team          </a>
+        </li>
+                        <li>
+          <a href="https://www.liip.ch/en/blog" class="navbar-menu__link is-active">
+            Blog          </a>
+        </li>
+              </ul>
+    </nav>
+  </div>
+</div>
+
+<script type="text/javascript">
+  window.addEventListener('DOMContentLoaded', function() {
+    var navbar = document.querySelector('#default-navbar');
+    new Styleguide.Navbar(navbar);
+  });
+</script>
+
+  <section class="section section--behind-navbar prism prism--l3">
+    <div class="section__body">
+                            <figure class="image-branded mrgb md-mrgb+ lg-mrgb++">
+          <img src="https://liip.rokka.io/www_articlebig/674f1c/clamp-clips-close-up-160824.jpg" srcset="https://liip.rokka.io/www_articlebig/options-dpr-2/674f1c/clamp-clips-close-up-160824.jpg 2x" alt="clamp-clips-close-up-160824.jpg" class="img-block" />
+        </figure>
+              
+      <article class="article">
+        <header class="mrgb">
+          <h1>Sentiment detection with Keras, word embeddings and LSTM deep learning networks</h1>
+          <ul class="list-inline">
+            <li><time datetime="2018-05-04" pubdate="pubdate" class="text-bold">04 May 2018</time></li>
+                                                        <li>Thomas Ebermann</li>
+                                    </ul>
+        </header>
+
+        <div class="wysiwyg">
+                                <div class="text-lead">
+              <p>Read this blog post to get an overview over SaaS and open source options for sentiment detection. Learn an easy and accurate method relying on word embeddings with LSTMs that allows you to do state of the art sentiment analysis with deep learning in Keras.</p>            </div>
+          
+          <h3>Overview SaaS</h3>
+<p>When it comes to sentiment detection it has become a bit of a commodity. Especially the big 5 vendors offer their own sentiment detection as a service. Google offers an <a href="https://cloud.google.com/natural-language/docs/sentiment-tutorial">NLP API</a> with sentiment detection. Microsoft offers sentiment detection through their <a href="https://azure.microsoft.com/en-us/services/cognitive-services/text-analytics/">Azure</a> platform. IBM has come up with a solution called <a href="https://www.ibm.com/watson/services/tone-analyzer/">Tone Analyzer</a>, that tries to get the &quot;tone&quot; of the message, which goes a bit beyond sentiment detection. Amazon offers a solution called <a href="https://aws.amazon.com/de/blogs/machine-learning/detect-sentiment-from-customer-reviews-using-amazon-comprehend/">comprehend</a> that runs on aws as a lambda. Facebook surprisingly doesn't offer an API or an open source project here, although they are the ones with user generated content, where people often are not <a href="https://www.nzz.ch/digital/facebook-fremdenfeindlichkeit-hass-kommentare-ld.1945">so nice</a> to each other. Interestingly they do not offer any assistance for page owners in that specific matter.</p>
+<p>Beyond the big 5 there are a few noteworthy of companies like <a href="https://aylien.com">Aylien</a> and <a href="https://monkeylearn.com">Monkeylearn</a>, that are worth checking out. </p>
+<h3>Overview Open Source Solutions</h3>
+<p>Of course there are are open source solutions or libraries that offer sentiment detection too.<br />
+Generally all of these tools offer more than just sentiment analysis. Most of the outlined SaaS solutions above as well as the open source libraries offer a vast amount of different NLP tasks:</p>
+<ul>
+<li>part of speech tagging (e.g. &quot;going&quot; is a verb), </li>
+<li>stemming (finding the &quot;root&quot; of a word e.g. am,are,is -&gt; be), </li>
+<li>noun phrase extraction (e.g. car is a noun), </li>
+<li>tokenization (e.g. splitting text into words, sentences), </li>
+<li>words inflections (e.g. what's the plural of atlas), </li>
+<li>spelling correction and translation. </li>
+</ul>
+<p>I like to point you to pythons <a href="http://text-processing.com/demo/sentiment/">NLTK library</a>, <a href="http://textblob.readthedocs.io/en/dev/quickstart.html#sentiment-analysis">TextBlob</a>, <a href="https://www.clips.uantwerpen.be/pages/pattern-en#sentiment">Pattern</a> or R's <a href="https://cran.r-project.org/web/packages/tm/index.html">Text Mining</a> module and Java's <a href="http://alias-i.com/lingpipe/demos/tutorial/sentiment/read-me.html">LingPipe</a> library. Finally, I encourage you to have a look at the latest <a href="https://spacy.io">Spacy NLP suite</a>, which doesn't offer sentiment detection per se but has great NLP capabilities. </p>
+<p>If you are looking for more options I encourage you to take a look at the full list that I have compiled in our <a href="http://datasciencestack.liip.ch/#nlp">data science stack</a>. </p>
+<h3>Let's get started</h3>
+<p>So you see, when you need sentiment analysis in your web-app or mobile app you already have a myriad of options to get started. Of course you might build something by yourself if your language is not supported or you have other legal compliances to meet when it comes to data privacy.</p>
+<p>Let me walk you through all of the steps needed to make a well working sentiment detection with <a href="https://keras.io">Keras</a> and <a href="https://de.wikipedia.org/wiki/Long_short-term_memory">long short-term memory networks</a>. Keras is a very popular python deep learning library, similar to <a href="http://tflearn.org">TFlearn</a> that allows to create neural networks without writing too much boiler plate code. LSTM networks are a special form or network architecture especially useful for text tasks which I am going to explain later. </p>
+<figure><img src="https://liip.rokka.io/www_inarticle/30a13b/keras.png" alt=""></figure>
+<h3>Step 1: Get the data</h3>
+<p>Being a big movie nerd, I have chosen to classify IMDB reviews as positive or negative for this example. As a benefit the IMDB sample comes already with the Keras <a href="https://keras.io/datasets/">datasets</a> library, so you don't have to download anything. If you are interested though, not a lot of people know that IMDB offers its <a href="https://www.imdb.com/interfaces/">own datasets</a> which can be <a href="https://datasets.imdbws.com">downloaded</a> publicly. Among those we are interested in the ones that contain movie reviews, which have been marked by hand to be either positive or negative. </p>
+<pre><code class="language-python">#download the data
+from keras.datasets import imdb 
+top_words = 5000 
+(X_train, y_train), (X_test, y_test) = imdb.load_data(num_words=top_words)</code></pre>
+<p>The code above does a couple of things at once: </p>
+<ol>
+<li>It downloads the data </li>
+<li>It downloads the first 5000 top words for each review </li>
+<li>It splits the data into a test and a training set. </li>
+</ol>
+<figure><img src="https://liip.rokka.io/www_inarticle/fb9a1c/processed.png" alt=""></figure>
+<p>If you look at the data you will realize it has been already pre-processed. All words have been mapped to integers and the integers represent the words sorted by their frequency. This is very common in text analysis to represent a dataset like this. So 4 represents the 4th most used word, 5 the 5th most used word and so on... The integer 1 is reserved reserved for the start marker, the integer 2 for an unknown word and 0 for padding. </p>
+<p>If you want to peek at the reviews yourself and see what people have actually written, you can reverse the process too:</p>
+<pre><code class="language-python">#reverse lookup
+word_to_id = keras.datasets.imdb.get_word_index()
+word_to_id = {k:(v+INDEX_FROM) for k,v in word_to_id.items()}
+word_to_id["&lt;PAD&gt;"] = 0
+word_to_id["&lt;START&gt;"] = 1
+word_to_id["&lt;UNK&gt;"] = 2
+id_to_word = {value:key for key,value in word_to_id.items()}
+print(' '.join(id_to_word[id] for id in train_x[0] ))</code></pre>
+<p>The output might look like something like this:</p>
+<pre><code class="language-python">&lt;START&gt; this film was just brilliant casting location scenery story direction everyone's really suited the part they played and you could just imagine being there robert &lt;UNK&gt; is an amazing actor and now the same being director &lt;UNK&gt; father came from the same scottish island as myself so i loved the fact there was a real connection with this film the witty remarks throughout the film were great it was just brilliant so much that i bought the film as soon as it was released for &lt;UNK&gt; and would recommend it to everyone to watch and the fly &lt;UNK&gt; was amazing really cried at the end it was so sad and you know w</code></pre>
+<h3>One-hot encoder</h3>
+<p>If you want to do the same with your text (e.g. my example are some work reviews) you can use Keras already built in &quot;one-hot&quot; encoder feature that will allow you to encode your documents with integers. The method is quite useful since it will remove any extra marks (e.g. !&quot;#$%&amp;...) and split sentences into words by space and transform the words into lowercase. </p>
+<pre><code class="language-python">#one hot encode your documents
+from numpy import array
+from keras.preprocessing.text import one_hot
+docs = ['Gut gemacht',
+        'Gute arbeit',
+        'Super idee',
+        'Perfekt erledigt',
+        'exzellent',
+        'naja',
+        'Schwache arbeit.',
+        'Nicht gut',
+        'Miese arbeit.',
+        'Hätte es besser machen können.']
+# integer encode the documents
+vocab_size = 50
+encoded_docs = [one_hot(d, vocab_size) for d in docs]
+print(encoded_docs)</code></pre>
+<p>Although the encoding will not be sorted like in our example before (e.g. lower numbers representing more frequent words), this will still give you a similar output:</p>
+<pre><code>[[18, 6], [35, 39], [49, 46], [41, 39], [25], [16], [11, 39], [6, 18], [21, 39], [15, 23, 19, 41, 25]]</code></pre>
+<h3>Step 2: Preprocess the data</h3>
+<p>Since the reviews differ heavily in terms of lengths we want to trim each review to its first 500 words. We need to have text samples of the same length in order to feed them into our neural network. If reviews are shorter than 500 words we will pad them with zeros. Keras being super nice, offers a set of <a href="https://keras.io/preprocessing/text/">preprocessing</a> routines that can do this for us easily. </p>
+<pre><code class="language-python"># Truncate and pad the review sequences 
+from keras.preprocessing import sequence 
+max_review_length = 500 
+X_train = sequence.pad_sequences(X_train, maxlen=max_review_length) 
+X_test = sequence.pad_sequences(X_test, maxlen=max_review_length) </code></pre>
+<figure><img src="https://liip.rokka.io/www_inarticle/27e1ad/padded.png" alt=""></figure>
+<p>As you see above (I've just output the padded Array as a pandas dataframe for visibility) a lot of the reviews have padded 0 at the front which means, that the review is shorter than 500 words. </p>
+<h3>Step 3: Build the model</h3>
+<p>Surprisingly we are already done with the data preparation and can already start to build our model. </p>
+<pre><code class="language-python"># Build the model 
+embedding_vector_length = 32 
+model = Sequential() 
+model.add(Embedding(top_words, embedding_vector_length, input_length=max_review_length)) 
+model.add(LSTM(100)) 
+model.add(Dense(1, activation='sigmoid')) 
+model.compile(loss='binary_crossentropy',optimizer='adam', metrics=['accuracy']) 
+print(model.summary()) </code></pre>
+<p>The two most important things in our code are the following:</p>
+<ol>
+<li>The Embedding layer and </li>
+<li>The LSTM Layer. </li>
+</ol>
+<p>Lets cover what both are doing. </p>
+<h3>Word embeddings</h3>
+<p>The embedding layer will learn a word embedding for all the words in the dataset. It has three arguments the input_dimension in our case the 500 words. The output dimension aka the vector space in which words will be embedded. In our case we have chosen 32 dimensions so a vector of the length of 32 to hold our word coordinates. </p>
+<p>There are already pre-trained word embeddings (e.g. GloVE or <a href="https://radimrehurek.com/gensim/models/word2vec.html">Word2Vec</a>) that you can <a href="https://nlp.stanford.edu/projects/glove/">download</a> so that you don't have to train your embeddings all by yourself. Generally, these word embeddings are also based on specialized algorithms that do the embedding always a bit different, but we won't cover it here. </p>
+<p>How can you imagine what an  embedding actually is? Well generally words that have a similar meaning in the context should be embedded next to each other. Below is an example of word embeddings in a two-dimensional space:</p>
+<figure><img src="https://liip.rokka.io/www_inarticle/88d44e/embeddings.png" alt=""></figure>
+<p>Why should we even care about word embeddings? Because it is a really useful trick. If we were to feed our reviews into a neural network and just one-hot encode them we would have very sparse representations of our texts. Why? Let us have a look at the sentence &quot;I do my job&quot; in &quot;bag of words&quot; representation with a vocabulary of 1000: So a matrix that holds 1000 words (each column is one word), has four ones in it (one for <strong>I</strong>, one for <strong>do</strong> one for <strong>my</strong> and one for <strong>job</strong>) and 996 zeros. So it would be very sparse. This means that learning from it would be difficult, because we would need 1000 input neurons each representing the occurrence of a word in our sentence. </p>
+<p>In contrast if we do a word embedding we can fold these 1000 words in just as many dimensions as we want, in our case 32. This means that we just have an input vector of 32 values instead of 1000. So the word &quot;I&quot; would be some vector with values (0.4,0.5,0.2,...) and the same would happen with the other words. With word embedding like this, we just need 32 input neurons. </p>
+<h3>LSTMs</h3>
+<p>Recurrent neural networks are networks that are used for &quot;things&quot; that happen recurrently so one thing after the other (e.g. time series, but also words). Long Short-Term Memory networks (LSTM) are a specific type of Recurrent Neural Network (RNN) that are capable of learning the relationships between elements in an input sequence. In our case the elements are words. So our next layer is an LSTM layer with 100 memory units.</p>
+<p>LSTM networks maintain a state, and so overcome the problem of a vanishing gradient problem in recurrent neural networks (basically the problem that when you make a network deep enough the information for learning will &quot;vanish&quot; at some point). I do not want to go into detail how they actually work, but <a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/">here</a> delivers a great visual explanation. Below is a schematic overview over the building blocks of LSTMs.</p>
+<p>So our output of the embedding layer is a 500 times 32 matrix. Each word is represented through its position in those 32 dimensions. And the sequence is the 500 words that we feed into the LSTM network. </p>
+<p>Finally at the end we have a dense layer with one node with a sigmoid activation as the output. </p>
+<p>Since we are going to have only the decision when the review is positive or negative we will use binary_crossentropy for the loss function. The optimizer is the standard one (adam) and the metrics are also the standard accuracy metric. </p>
+<p>By the way, if you want you can build a sentiment analysis without LSTMs, then you simply need to replace it by a flatten layer:</p>
+<pre><code class="language-python">#Replace LSTM by a flatten layer
+#model.add(LSTM(100)) 
+model.add(Flatten()) </code></pre>
+<h3>Step 4: Train the model</h3>
+<p>After defining the model Keras gives us a summary of what we have built. It looks like this:</p>
+<pre><code class="language-python">#Summary from Keras
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding_1 (Embedding)      (None, 500, 32)           160000    
+_________________________________________________________________
+lstm_1 (LSTM)                (None, 100)               53200     
+_________________________________________________________________
+dense_1 (Dense)              (None, 1)                 101       
+=================================================================
+Total params: 213,301
+Trainable params: 213,301
+Non-trainable params: 0
+_________________________________________________________________
+None</code></pre>
+<p>To train the model we simply call the fit function,supply it with the training data and also tell it which data it can use for validation. That is really useful because we have everything in one call. </p>
+<pre><code class="language-python">#Train the model
+model.fit(X_train, y_train, validation_data=(X_test, y_test), nb_epoch=3, batch_size=64) </code></pre>
+<p>The training of the model might take a while, especially when you are only running it on the CPU instead of the GPU. When the model training happens, what you want to observe is the loss function, it should constantly be going down, this shows that the model is improving. We will make the model see the dataset 3 times, defined by the epochs parameter. The batch size defines how many samples the model will see at once - in our case 64 reviews. </p>
+<figure><img src="https://liip.rokka.io/www_inarticle/1868ba/training.png" alt=""></figure>
+<p>To observe the training you can fire up tensor board which will run in the browser and give you a lot of different analytics, especially the loss curve in real time. To do so type in your console:</p>
+<pre><code class="language-bash">sudo tensorboard --logdir=/tmp</code></pre>
+<h3>Step 5: Test the model</h3>
+<p>Once we have finished training the model we can easily test its accuracy. Keras provides a very handy function to do that:</p>
+<pre><code class="language-python">#Evaluate the model
+scores = model.evaluate(X_test, y_test, verbose=0) 
+print("Accuracy: %.2f%%" % (scores[1]*100))</code></pre>
+<p>In our case the model achieved an accuracy of around 90% which is excellent, given the difficult task. By the way if you are wondering what the results would have been with the Flatten layer it is also around 90%. So in this case I would use <a href="https://en.wikipedia.org/wiki/Occam%27s_razor">Occam's razor</a> and in case and in doubt: go with the simpler model.</p>
+<h3>Step 6: Predict something</h3>
+<p>Of course at the end we want to use our model in an application. So we want to use it to create predictions. In order to do so we need to translate our sentence into the corresponding word integers and then pad it to match our data. We can then feed it into our model and see if how it thinks we liked or disliked the movie.</p>
+<pre><code class="language-python">#predict sentiment from reviews
+bad = "this movie was terrible and bad"
+good = "i really liked the movie and had fun"
+for review in [good,bad]:
+    tmp = []
+    for word in review.split(" "):
+        tmp.append(word_to_id[word])
+    tmp_padded = sequence.pad_sequences([tmp], maxlen=max_review_length) 
+    print("%s. Sentiment: %s" % (review,model.predict(array([tmp_padded][0]))[0][0]))
+i really liked the movie and had fun. Sentiment: 0.715537
+this movie was terrible and bad. Sentiment: 0.0353295</code></pre>
+<p>In this case a value close to 0 means the sentiment was negative and a value close to 1 means its a positive review. You can also use &quot;model.predict_classes&quot; to just get the classes of positive and negative. </p>
+<h3>Conclusion or what’s next?</h3>
+<p>So we have built quite a cool sentiment analysis for IMDB reviews that predicts if a movie review is positive or negative with 90% accuracy. With this we are already <a href="https://en.wikipedia.org/wiki/Sentiment_analysis">quite close</a> to industry standards. This means that in comparison to a <a href="https://www.liip.ch/en/blog/whats-your-twitter-mood">quick prototype</a> that a colleague of mine built a few years ago we could potentially improve on it now. The big benefit while comparing our self-built solution with an SaaS solution on the market is that we own our data and model. We can now deploy this model on our own infrastructure and use it as often as we like. Google or Amazon never get to see sensitive customer data, which might be relevant for certain business cases. We can train it with German or even Swiss German language given that we find a nice dataset, or simply build one ourselves. </p>
+<p>As always I am looking forward to your comments and insights! As usual you can download the Ipython notebook with the code <a href="https://github.com/plotti/keras_sentiment/blob/master/Imdb%20Sentiment.ipynb">here</a>.</p>
+<p>P.S. The people from monkeylearn contacted me and pointed out that they have written quite an extensive introduction to sentiment detection here: <a href="https://monkeylearn.com/sentiment-analysis/">https://monkeylearn.com/sentiment-analysis/</a> so I point you to that in case you want to read up on the general concepts.</p>        </div>
+
+        <footer class="mrgt+ lg-mrgt++">
+                      
+    
+<a href="https://www.liip.ch/en/team/thomas-ebermann" class="liiper-card media media--middle">
+  <div class="media__left">
+                  <div class="liiper-card__avatar avatar" style="background-image:url('https://liip.rokka.io/www_liipersmall/f384b858c3abbb989302690a906124d875711349/thomas-ebermann.jpg'); background-image: -webkit-image-set(url('https://liip.rokka.io/www_liipersmall/f384b858c3abbb989302690a906124d875711349/thomas-ebermann.jpg') 1x, url('https://liip.rokka.io/www_liipersmall/options-dpr-2/f384b858c3abbb989302690a906124d875711349/thomas-ebermann.jpg') 2x);"></div>
+  </div>
+  <div class="media__body">
+    <div class="liiper-card__name">Thomas Ebermann</div>
+
+      </div>
+</a>
+          
+          <div class="grid grid--multiline mrgt+ lg-mrgt++">
+                          <div class="grid__item sm-w-1/2">
+                <h6 class="mrgt0">Related services</h6>
+                <ul class="list-stacked list-stacked--tiny">
+                                      <li>
+<a href="https://www.liip.ch/en/work/data" class="expertise-tag">
+  <span class="expertise-tag__body">Data</span>
+  <svg class="icon icon--slashes expertise-icon" aria-hidden="true" focusable="false">
+  <use xlink:href="/assets/dist/icons.1553239428.svg#slashes"></use>
+</svg></a>
+</li>
+                                  </ul>
+              </div>
+                                                  <div class="grid__item sm-w-1/2">
+                <ul class="list-stacked">
+                                                          <li>
+                      <h6 class="mrgt0">Topics</h6>
+                      <ul class="list-inline list-inline--tight">
+                                                                            <li class="mrgr-- mrgb--">
+                                                          <a href="https://www.liip.ch/en/blog/topics/open-source" class="tag">Open Source</a>
+                                                      </li>
+                                                                            <li class="mrgr-- mrgb--">
+                                                          <a href="https://www.liip.ch/en/blog/topics/technology" class="tag">Technology</a>
+                                                      </li>
+                                              </ul>
+                    </li>
+                                                        <li>
+                      <h6 class="mrgt0">Tags</h6>
+                      <ul class="list-inline list-inline--tight">
+                                                  <li class="mrgr-- mrgb--"><a href="https://www.liip.ch/en/blog/tags/sentiment+analysis" class="tag">sentiment analysis</a></li>
+                                                  <li class="mrgr-- mrgb--"><a href="https://www.liip.ch/en/blog/tags/machine+learning" class="tag">machine learning</a></li>
+                                                  <li class="mrgr-- mrgb--"><a href="https://www.liip.ch/en/blog/tags/keras" class="tag">keras</a></li>
+                                                  <li class="mrgr-- mrgb--"><a href="https://www.liip.ch/en/blog/tags/deep-learning" class="tag">deep-learning</a></li>
+                                                  <li class="mrgr-- mrgb--"><a href="https://www.liip.ch/en/blog/tags/data-services" class="tag">data-services</a></li>
+                                              </ul>
+                    </li>
+                                  </ul>
+              </div>
+                      </div>
+        </footer>
+      </article>
+    </div>
+  </section>
+
+  <hr>
+
+<section class="section">
+  <div class="section__body">
+    <h2 class="mrgt0">Tell us what you think</h2>
+    <div id="disqus_thread"></div>
+<script>
+  var disqus_config = function () {
+    this.page.url = 'https://www.liip.ch/en/blog/sentiment-detection-with-keras-word-embeddings-and-lstm-deep-learning-networks';
+    this.page.identifier = 'blog/sentiment-detection-with-keras-word-embeddings-and-lstm-deep-learning-networks';
+    this.page.title = 'Sentiment detection with Keras, word embeddings and LSTM deep learning networks';
+    this.language = 'en';
+  };
+  (function() {
+  var d = document, s = d.createElement('script');
+  s.src = 'https://liip.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', +new Date());
+  (d.head || d.body).appendChild(s);
+  })();
+</script>
+<noscript>
+  Please enable JavaScript to view the comments.</noscript>
+
+  </div>
+</section>
+
+  <hr>
+
+  <section class="section">
+    <div class="section__body">
+      <div class="grid grid--large grid--multiline">
+          <div class="grid__item sm-w-1/2 lg-w-1/3 mrgt+">
+      <div class="article-card">
+  <a href="https://www.liip.ch/en/blog/recommender-system-slack-pandas-flask" class="article-card__link">
+        <figure class="image-branded">
+            <img src="https://liip.rokka.io/www_card_2/90b7ad/color-pencils-colored-pencils-colorful-50996.jpg" srcset="https://liip.rokka.io/www_card_2/options-dpr-2/90b7ad/color-pencils-colored-pencils-colorful-50996.jpg 2x" class="img-block" />
+    </figure>
+
+    <h3 class="h4 article-card__title">A recommender system for Slack with Pandas & Flask</h3>
+        <p class="article-card__excerpt">Learn how to build an easy collaborative filtering style system recommender for Slack. In this article I highlight the basic principles that most recommender systems share.</p>
+  </a>
+
+          
+    
+<a href="https://www.liip.ch/en/team/thomas-ebermann" class="liiper-card--small liiper-card media media--middle">
+  <div class="media__left">
+                  <div class="liiper-card__avatar avatar" style="background-image:url('https://liip.rokka.io/www_liipersmall/f384b858c3abbb989302690a906124d875711349/thomas-ebermann.jpg'); background-image: -webkit-image-set(url('https://liip.rokka.io/www_liipersmall/f384b858c3abbb989302690a906124d875711349/thomas-ebermann.jpg') 1x, url('https://liip.rokka.io/www_liipersmall/options-dpr-2/f384b858c3abbb989302690a906124d875711349/thomas-ebermann.jpg') 2x);"></div>
+  </div>
+  <div class="media__body">
+    <div class="liiper-card__name">Thomas Ebermann</div>
+
+      </div>
+</a>
+  </div>
+    </div>
+          <div class="grid__item sm-w-1/2 lg-w-1/3 mrgt+">
+      <div class="article-card">
+  <a href="https://www.liip.ch/en/blog/the-facebook-scandal-or-how-to-predict-psychological-traits-from-facebook-likes" class="article-card__link">
+        <figure class="image-branded">
+            <img src="https://liip.rokka.io/www_card_2/16dc35/apps-blur-button-267350.jpg" srcset="https://liip.rokka.io/www_card_2/options-dpr-2/16dc35/apps-blur-button-267350.jpg 2x" class="img-block" />
+    </figure>
+
+    <h3 class="h4 article-card__title">The Facebook Scandal - or how to predict psychological traits from Facebook likes.</h3>
+        <p class="article-card__excerpt">If you always wondered how Facebook likes can be used to predict your psychological traits, then you should read this article on how to create a machine learning models that do just…</p>
+  </a>
+
+          
+    
+<a href="https://www.liip.ch/en/team/thomas-ebermann" class="liiper-card--small liiper-card media media--middle">
+  <div class="media__left">
+                  <div class="liiper-card__avatar avatar" style="background-image:url('https://liip.rokka.io/www_liipersmall/f384b858c3abbb989302690a906124d875711349/thomas-ebermann.jpg'); background-image: -webkit-image-set(url('https://liip.rokka.io/www_liipersmall/f384b858c3abbb989302690a906124d875711349/thomas-ebermann.jpg') 1x, url('https://liip.rokka.io/www_liipersmall/options-dpr-2/f384b858c3abbb989302690a906124d875711349/thomas-ebermann.jpg') 2x);"></div>
+  </div>
+  <div class="media__body">
+    <div class="liiper-card__name">Thomas Ebermann</div>
+
+      </div>
+</a>
+  </div>
+    </div>
+          <div class="grid__item sm-w-1/2 lg-w-1/3 mrgt+ hidden-md-down">
+      <div class="article-card">
+  <a href="https://www.liip.ch/en/blog/tensorflow-and-tflearn-or-can-deep-learning-predict-if-dicaprio-could-have-survived-the-titanic" class="article-card__link">
+        <figure class="image-branded">
+            <img src="https://liip.rokka.io/www_card_2/4aeba2/istock-458924911.jpg" srcset="https://liip.rokka.io/www_card_2/options-dpr-2/4aeba2/istock-458924911.jpg 2x" class="img-block" />
+    </figure>
+
+    <h3 class="h4 article-card__title">Tensorflow and TFlearn or can deep learning predict if DiCaprio could have survived the Titanic?</h3>
+        <p class="article-card__excerpt">A short introduction on how to get started with deep learning. After a quick intro and overview over deep learning frameworks I will show you how to use Tensorflow with Tflearn  and…</p>
+  </a>
+
+          
+    
+<a href="https://www.liip.ch/en/team/thomas-ebermann" class="liiper-card--small liiper-card media media--middle">
+  <div class="media__left">
+                  <div class="liiper-card__avatar avatar" style="background-image:url('https://liip.rokka.io/www_liipersmall/f384b858c3abbb989302690a906124d875711349/thomas-ebermann.jpg'); background-image: -webkit-image-set(url('https://liip.rokka.io/www_liipersmall/f384b858c3abbb989302690a906124d875711349/thomas-ebermann.jpg') 1x, url('https://liip.rokka.io/www_liipersmall/options-dpr-2/f384b858c3abbb989302690a906124d875711349/thomas-ebermann.jpg') 2x);"></div>
+  </div>
+  <div class="media__body">
+    <div class="liiper-card__name">Thomas Ebermann</div>
+
+      </div>
+</a>
+  </div>
+    </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer hidden-print">
+    <div class="section">
+      <div class="section__body">
+        <div class="addresses grid grid--multiline hidden-sm-down">
+                    <div class="grid__item sm-w-1/2 md-w-1/3 lg-w-1/5">
+            <article class="address address--300">
+              <div class="weather address__weather">
+                <div class="weather__icon icon icon--200" data-city-id="2659994">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.9 10.9c.3-1.1.1-2.3-.6-3.2-.8-1.1-2-1.7-3.3-1.7-1-2.4-3.4-4-6-4-3.4 0-6.2 2.7-6.5 6-3.1.3-5.5 2.9-5.5 6 0 3.3 2.7 6 6 6h13c2.8 0 5-2.2 5-5 0-1.6-.8-3.1-2.1-4.1zM19 19H6c-2.8 0-5-2.2-5-5s2.2-5 5-5c.3 0 .5-.2.5-.5C6.5 5.5 9 3 12 3c2.3 0 4.4 1.5 5.2 3.7.1.2.3.3.5.3 1.1-.1 2.1.4 2.7 1.2.6.9.8 1.8.4 2.8-.1.2 0 .5.2.6 1.2.7 2 2 2 3.4 0 2.2-1.8 4-4 4z"/><circle cx="12" cy="15.6" r=".7"/><path d="M12 7.2c-1.4 0-2.6 1.2-2.6 2.6 0 .3.2.5.5.5s.5-.2.5-.5c0-.9.7-1.6 1.6-1.6.9 0 1.6.7 1.6 1.6 0 .9-.7 1.6-1.6 1.6-.3 0-.5.2-.5.5V14c0 .3.2.5.5.5s.5-.2.5-.5v-1.6c1.2-.2 2.1-1.3 2.1-2.5 0-1.6-1.2-2.7-2.6-2.7z"/></svg>                </div>
+              </div>
+              <h2 class="h4 address__title">Lausanne</h2>
+              <address class="address__body">
+                Rue Etraz 4<br>
+                                CH-1003 Lausanne<br>
+                                  Phone:                  <a href="tel:+41215331300" class="link-text">+41 21 533 13 00</a><br>
+                              </address>
+                              <a href="https://www.google.ch/maps/place/Liip+SA/@46.519291,6.6360539,17z/data=!3m1!4b1!4m5!3m4!1s0x478c2e339695a2e1:0x9cd730b81e05924b!8m2!3d46.519291!4d6.6382426?hl=en" class="address__map-link">Directions</a>
+                          </article>
+          </div>
+                    <div class="grid__item sm-w-1/2 md-w-1/3 lg-w-1/5">
+            <article class="address address--400">
+              <div class="weather address__weather">
+                <div class="weather__icon icon icon--200" data-city-id="2660718">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.9 10.9c.3-1.1.1-2.3-.6-3.2-.8-1.1-2-1.7-3.3-1.7-1-2.4-3.4-4-6-4-3.4 0-6.2 2.7-6.5 6-3.1.3-5.5 2.9-5.5 6 0 3.3 2.7 6 6 6h13c2.8 0 5-2.2 5-5 0-1.6-.8-3.1-2.1-4.1zM19 19H6c-2.8 0-5-2.2-5-5s2.2-5 5-5c.3 0 .5-.2.5-.5C6.5 5.5 9 3 12 3c2.3 0 4.4 1.5 5.2 3.7.1.2.3.3.5.3 1.1-.1 2.1.4 2.7 1.2.6.9.8 1.8.4 2.8-.1.2 0 .5.2.6 1.2.7 2 2 2 3.4 0 2.2-1.8 4-4 4z"/><circle cx="12" cy="15.6" r=".7"/><path d="M12 7.2c-1.4 0-2.6 1.2-2.6 2.6 0 .3.2.5.5.5s.5-.2.5-.5c0-.9.7-1.6 1.6-1.6.9 0 1.6.7 1.6 1.6 0 .9-.7 1.6-1.6 1.6-.3 0-.5.2-.5.5V14c0 .3.2.5.5.5s.5-.2.5-.5v-1.6c1.2-.2 2.1-1.3 2.1-2.5 0-1.6-1.2-2.7-2.6-2.7z"/></svg>                </div>
+              </div>
+              <h2 class="h4 address__title">Fribourg</h2>
+              <address class="address__body">
+                Rue de la Banque 1<br>
+                                  CP 917<br>
+                                CH-1701 Fribourg<br>
+                                  Phone:                  <a href="tel:+41264222511" class="link-text">+41 26 422 25 11</a><br>
+                              </address>
+                              <a href="https://www.google.ch/maps/place/Liip+AG/@46.8042744,7.1526074,17z/data=!4m5!3m4!1s0x478e692e6c342abb:0xfa0c76ce88136f93!8m2!3d46.8042744!4d7.1547961?hl=en" class="address__map-link">Directions</a>
+                          </article>
+          </div>
+                    <div class="grid__item sm-w-1/2 md-w-1/3 lg-w-1/5">
+            <article class="address address--500">
+              <div class="weather address__weather">
+                <div class="weather__icon icon icon--200" data-city-id="2661552">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.9 10.9c.3-1.1.1-2.3-.6-3.2-.8-1.1-2-1.7-3.3-1.7-1-2.4-3.4-4-6-4-3.4 0-6.2 2.7-6.5 6-3.1.3-5.5 2.9-5.5 6 0 3.3 2.7 6 6 6h13c2.8 0 5-2.2 5-5 0-1.6-.8-3.1-2.1-4.1zM19 19H6c-2.8 0-5-2.2-5-5s2.2-5 5-5c.3 0 .5-.2.5-.5C6.5 5.5 9 3 12 3c2.3 0 4.4 1.5 5.2 3.7.1.2.3.3.5.3 1.1-.1 2.1.4 2.7 1.2.6.9.8 1.8.4 2.8-.1.2 0 .5.2.6 1.2.7 2 2 2 3.4 0 2.2-1.8 4-4 4z"/><circle cx="12" cy="15.6" r=".7"/><path d="M12 7.2c-1.4 0-2.6 1.2-2.6 2.6 0 .3.2.5.5.5s.5-.2.5-.5c0-.9.7-1.6 1.6-1.6.9 0 1.6.7 1.6 1.6 0 .9-.7 1.6-1.6 1.6-.3 0-.5.2-.5.5V14c0 .3.2.5.5.5s.5-.2.5-.5v-1.6c1.2-.2 2.1-1.3 2.1-2.5 0-1.6-1.2-2.7-2.6-2.7z"/></svg>                </div>
+              </div>
+              <h2 class="h4 address__title">Bern</h2>
+              <address class="address__body">
+                Schmiedenplatz 5<br>
+                                CH-3011 Bern<br>
+                                  Phone:                  <a href="tel:+41315505970" class="link-text">+41 31 550 59 70</a><br>
+                              </address>
+                              <a href="https://www.google.ch/maps/place/Liip+AG/@46.9486449,7.444509,17z/data=!3m1!4b1!4m5!3m4!1s0x478e39c14ff1e8c3:0x80099f7dcdbeb001!8m2!3d46.9486449!4d7.4466977?hl=en" class="address__map-link">Directions</a>
+                          </article>
+          </div>
+                    <div class="grid__item sm-w-1/2 md-w-1/3 lg-w-1/5">
+            <article class="address address--600">
+              <div class="weather address__weather">
+                <div class="weather__icon icon icon--200" data-city-id="6295494">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.9 10.9c.3-1.1.1-2.3-.6-3.2-.8-1.1-2-1.7-3.3-1.7-1-2.4-3.4-4-6-4-3.4 0-6.2 2.7-6.5 6-3.1.3-5.5 2.9-5.5 6 0 3.3 2.7 6 6 6h13c2.8 0 5-2.2 5-5 0-1.6-.8-3.1-2.1-4.1zM19 19H6c-2.8 0-5-2.2-5-5s2.2-5 5-5c.3 0 .5-.2.5-.5C6.5 5.5 9 3 12 3c2.3 0 4.4 1.5 5.2 3.7.1.2.3.3.5.3 1.1-.1 2.1.4 2.7 1.2.6.9.8 1.8.4 2.8-.1.2 0 .5.2.6 1.2.7 2 2 2 3.4 0 2.2-1.8 4-4 4z"/><circle cx="12" cy="15.6" r=".7"/><path d="M12 7.2c-1.4 0-2.6 1.2-2.6 2.6 0 .3.2.5.5.5s.5-.2.5-.5c0-.9.7-1.6 1.6-1.6.9 0 1.6.7 1.6 1.6 0 .9-.7 1.6-1.6 1.6-.3 0-.5.2-.5.5V14c0 .3.2.5.5.5s.5-.2.5-.5v-1.6c1.2-.2 2.1-1.3 2.1-2.5 0-1.6-1.2-2.7-2.6-2.7z"/></svg>                </div>
+              </div>
+              <h2 class="h4 address__title">Z&uuml;rich</h2>
+              <address class="address__body">
+                Limmatstrasse 183<br>
+                                CH-8005 Z&uuml;rich<br>
+                                  Phone:                  <a href="tel:+41435003980" class="link-text">+41 43 500 39 80</a><br>
+                              </address>
+                              <a href="https://www.google.ch/maps/place/Liip+AG/@47.3861445,8.5270333,17z/data=!3m1!4b1!4m5!3m4!1s0x47900a171eb6d28d:0x9e78386020738294!8m2!3d47.3861445!4d8.529222?hl=en" class="address__map-link">Directions</a>
+                          </article>
+          </div>
+                    <div class="grid__item sm-w-1/2 md-w-1/3 lg-w-1/5">
+            <article class="address address--700">
+              <div class="weather address__weather">
+                <div class="weather__icon icon icon--200" data-city-id="2658822">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.9 10.9c.3-1.1.1-2.3-.6-3.2-.8-1.1-2-1.7-3.3-1.7-1-2.4-3.4-4-6-4-3.4 0-6.2 2.7-6.5 6-3.1.3-5.5 2.9-5.5 6 0 3.3 2.7 6 6 6h13c2.8 0 5-2.2 5-5 0-1.6-.8-3.1-2.1-4.1zM19 19H6c-2.8 0-5-2.2-5-5s2.2-5 5-5c.3 0 .5-.2.5-.5C6.5 5.5 9 3 12 3c2.3 0 4.4 1.5 5.2 3.7.1.2.3.3.5.3 1.1-.1 2.1.4 2.7 1.2.6.9.8 1.8.4 2.8-.1.2 0 .5.2.6 1.2.7 2 2 2 3.4 0 2.2-1.8 4-4 4z"/><circle cx="12" cy="15.6" r=".7"/><path d="M12 7.2c-1.4 0-2.6 1.2-2.6 2.6 0 .3.2.5.5.5s.5-.2.5-.5c0-.9.7-1.6 1.6-1.6.9 0 1.6.7 1.6 1.6 0 .9-.7 1.6-1.6 1.6-.3 0-.5.2-.5.5V14c0 .3.2.5.5.5s.5-.2.5-.5v-1.6c1.2-.2 2.1-1.3 2.1-2.5 0-1.6-1.2-2.7-2.6-2.7z"/></svg>                </div>
+              </div>
+              <h2 class="h4 address__title">St.&nbsp;Gallen</h2>
+              <address class="address__body">
+                Vadianstrasse 25A<br>
+                                CH-9000 St. Gallen<br>
+                                  Phone:                  <a href="tel:+41715771337" class="link-text">+41 71 577 13 37</a><br>
+                              </address>
+                              <a href="https://www.google.ch/maps/place/Liip+AG/@47.4217033,9.3692739,17z/data=!4m5!3m4!1s0x479b1e4b98a711c1:0x369b70f01bcdd979!8m2!3d47.4217033!4d9.3714626?hl=en" class="address__map-link">Directions</a>
+                          </article>
+          </div>
+                  </div>
+
+        <div class="hidden-md-up">
+          <article class="address">
+                                      <div class="weather hidden" data-address-block="3">
+                <div class="weather__icon icon icon--200" data-city-id="2659994">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.9 10.9c.3-1.1.1-2.3-.6-3.2-.8-1.1-2-1.7-3.3-1.7-1-2.4-3.4-4-6-4-3.4 0-6.2 2.7-6.5 6-3.1.3-5.5 2.9-5.5 6 0 3.3 2.7 6 6 6h13c2.8 0 5-2.2 5-5 0-1.6-.8-3.1-2.1-4.1zM19 19H6c-2.8 0-5-2.2-5-5s2.2-5 5-5c.3 0 .5-.2.5-.5C6.5 5.5 9 3 12 3c2.3 0 4.4 1.5 5.2 3.7.1.2.3.3.5.3 1.1-.1 2.1.4 2.7 1.2.6.9.8 1.8.4 2.8-.1.2 0 .5.2.6 1.2.7 2 2 2 3.4 0 2.2-1.8 4-4 4z"/><circle cx="12" cy="15.6" r=".7"/><path d="M12 7.2c-1.4 0-2.6 1.2-2.6 2.6 0 .3.2.5.5.5s.5-.2.5-.5c0-.9.7-1.6 1.6-1.6.9 0 1.6.7 1.6 1.6 0 .9-.7 1.6-1.6 1.6-.3 0-.5.2-.5.5V14c0 .3.2.5.5.5s.5-.2.5-.5v-1.6c1.2-.2 2.1-1.3 2.1-2.5 0-1.6-1.2-2.7-2.6-2.7z"/></svg>                </div>
+              </div>
+                          <div class="weather" data-address-block="2">
+                <div class="weather__icon icon icon--200" data-city-id="2660718">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.9 10.9c.3-1.1.1-2.3-.6-3.2-.8-1.1-2-1.7-3.3-1.7-1-2.4-3.4-4-6-4-3.4 0-6.2 2.7-6.5 6-3.1.3-5.5 2.9-5.5 6 0 3.3 2.7 6 6 6h13c2.8 0 5-2.2 5-5 0-1.6-.8-3.1-2.1-4.1zM19 19H6c-2.8 0-5-2.2-5-5s2.2-5 5-5c.3 0 .5-.2.5-.5C6.5 5.5 9 3 12 3c2.3 0 4.4 1.5 5.2 3.7.1.2.3.3.5.3 1.1-.1 2.1.4 2.7 1.2.6.9.8 1.8.4 2.8-.1.2 0 .5.2.6 1.2.7 2 2 2 3.4 0 2.2-1.8 4-4 4z"/><circle cx="12" cy="15.6" r=".7"/><path d="M12 7.2c-1.4 0-2.6 1.2-2.6 2.6 0 .3.2.5.5.5s.5-.2.5-.5c0-.9.7-1.6 1.6-1.6.9 0 1.6.7 1.6 1.6 0 .9-.7 1.6-1.6 1.6-.3 0-.5.2-.5.5V14c0 .3.2.5.5.5s.5-.2.5-.5v-1.6c1.2-.2 2.1-1.3 2.1-2.5 0-1.6-1.2-2.7-2.6-2.7z"/></svg>                </div>
+              </div>
+                          <div class="weather hidden" data-address-block="6">
+                <div class="weather__icon icon icon--200" data-city-id="2661552">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.9 10.9c.3-1.1.1-2.3-.6-3.2-.8-1.1-2-1.7-3.3-1.7-1-2.4-3.4-4-6-4-3.4 0-6.2 2.7-6.5 6-3.1.3-5.5 2.9-5.5 6 0 3.3 2.7 6 6 6h13c2.8 0 5-2.2 5-5 0-1.6-.8-3.1-2.1-4.1zM19 19H6c-2.8 0-5-2.2-5-5s2.2-5 5-5c.3 0 .5-.2.5-.5C6.5 5.5 9 3 12 3c2.3 0 4.4 1.5 5.2 3.7.1.2.3.3.5.3 1.1-.1 2.1.4 2.7 1.2.6.9.8 1.8.4 2.8-.1.2 0 .5.2.6 1.2.7 2 2 2 3.4 0 2.2-1.8 4-4 4z"/><circle cx="12" cy="15.6" r=".7"/><path d="M12 7.2c-1.4 0-2.6 1.2-2.6 2.6 0 .3.2.5.5.5s.5-.2.5-.5c0-.9.7-1.6 1.6-1.6.9 0 1.6.7 1.6 1.6 0 .9-.7 1.6-1.6 1.6-.3 0-.5.2-.5.5V14c0 .3.2.5.5.5s.5-.2.5-.5v-1.6c1.2-.2 2.1-1.3 2.1-2.5 0-1.6-1.2-2.7-2.6-2.7z"/></svg>                </div>
+              </div>
+                          <div class="weather hidden" data-address-block="1">
+                <div class="weather__icon icon icon--200" data-city-id="6295494">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.9 10.9c.3-1.1.1-2.3-.6-3.2-.8-1.1-2-1.7-3.3-1.7-1-2.4-3.4-4-6-4-3.4 0-6.2 2.7-6.5 6-3.1.3-5.5 2.9-5.5 6 0 3.3 2.7 6 6 6h13c2.8 0 5-2.2 5-5 0-1.6-.8-3.1-2.1-4.1zM19 19H6c-2.8 0-5-2.2-5-5s2.2-5 5-5c.3 0 .5-.2.5-.5C6.5 5.5 9 3 12 3c2.3 0 4.4 1.5 5.2 3.7.1.2.3.3.5.3 1.1-.1 2.1.4 2.7 1.2.6.9.8 1.8.4 2.8-.1.2 0 .5.2.6 1.2.7 2 2 2 3.4 0 2.2-1.8 4-4 4z"/><circle cx="12" cy="15.6" r=".7"/><path d="M12 7.2c-1.4 0-2.6 1.2-2.6 2.6 0 .3.2.5.5.5s.5-.2.5-.5c0-.9.7-1.6 1.6-1.6.9 0 1.6.7 1.6 1.6 0 .9-.7 1.6-1.6 1.6-.3 0-.5.2-.5.5V14c0 .3.2.5.5.5s.5-.2.5-.5v-1.6c1.2-.2 2.1-1.3 2.1-2.5 0-1.6-1.2-2.7-2.6-2.7z"/></svg>                </div>
+              </div>
+                          <div class="weather hidden" data-address-block="5">
+                <div class="weather__icon icon icon--200" data-city-id="2658822">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.9 10.9c.3-1.1.1-2.3-.6-3.2-.8-1.1-2-1.7-3.3-1.7-1-2.4-3.4-4-6-4-3.4 0-6.2 2.7-6.5 6-3.1.3-5.5 2.9-5.5 6 0 3.3 2.7 6 6 6h13c2.8 0 5-2.2 5-5 0-1.6-.8-3.1-2.1-4.1zM19 19H6c-2.8 0-5-2.2-5-5s2.2-5 5-5c.3 0 .5-.2.5-.5C6.5 5.5 9 3 12 3c2.3 0 4.4 1.5 5.2 3.7.1.2.3.3.5.3 1.1-.1 2.1.4 2.7 1.2.6.9.8 1.8.4 2.8-.1.2 0 .5.2.6 1.2.7 2 2 2 3.4 0 2.2-1.8 4-4 4z"/><circle cx="12" cy="15.6" r=".7"/><path d="M12 7.2c-1.4 0-2.6 1.2-2.6 2.6 0 .3.2.5.5.5s.5-.2.5-.5c0-.9.7-1.6 1.6-1.6.9 0 1.6.7 1.6 1.6 0 .9-.7 1.6-1.6 1.6-.3 0-.5.2-.5.5V14c0 .3.2.5.5.5s.5-.2.5-.5v-1.6c1.2-.2 2.1-1.3 2.1-2.5 0-1.6-1.2-2.7-2.6-2.7z"/></svg>                </div>
+              </div>
+                        <select class="address-switcher field field--light field--primary field--large text-bold mrgb-">
+                              <option value="3">Lausanne</option>
+                              <option value="2" selected>Fribourg</option>
+                              <option value="6">Bern</option>
+                              <option value="1">Z&uuml;rich</option>
+                              <option value="5">St.&nbsp;Gallen</option>
+                          </select>
+                          <div class="hidden" data-address-block="3">
+                <address class="address__body">
+                  Rue Etraz 4<br>
+                                    CH-1003 Lausanne<br>
+                                      Phone:                    <a href="tel:+41215331300" class="link-text">+41 21 533 13 00</a><br>
+                                                    </address>
+                                  <a href="https://www.google.ch/maps/place/Liip+SA/@46.519291,6.6360539,17z/data=!3m1!4b1!4m5!3m4!1s0x478c2e339695a2e1:0x9cd730b81e05924b!8m2!3d46.519291!4d6.6382426?hl=en" class="address__map-link">Directions</a>
+                              </div>
+                          <div data-address-block="2">
+                <address class="address__body">
+                  Rue de la Banque 1<br>
+                                      CP 917<br>
+                                    CH-1701 Fribourg<br>
+                                      Phone:                    <a href="tel:+41264222511" class="link-text">+41 26 422 25 11</a><br>
+                                                    </address>
+                                  <a href="https://www.google.ch/maps/place/Liip+AG/@46.8042744,7.1526074,17z/data=!4m5!3m4!1s0x478e692e6c342abb:0xfa0c76ce88136f93!8m2!3d46.8042744!4d7.1547961?hl=en" class="address__map-link">Directions</a>
+                              </div>
+                          <div class="hidden" data-address-block="6">
+                <address class="address__body">
+                  Schmiedenplatz 5<br>
+                                    CH-3011 Bern<br>
+                                      Phone:                    <a href="tel:+41315505970" class="link-text">+41 31 550 59 70</a><br>
+                                                    </address>
+                                  <a href="https://www.google.ch/maps/place/Liip+AG/@46.9486449,7.444509,17z/data=!3m1!4b1!4m5!3m4!1s0x478e39c14ff1e8c3:0x80099f7dcdbeb001!8m2!3d46.9486449!4d7.4466977?hl=en" class="address__map-link">Directions</a>
+                              </div>
+                          <div class="hidden" data-address-block="1">
+                <address class="address__body">
+                  Limmatstrasse 183<br>
+                                    CH-8005 Z&uuml;rich<br>
+                                      Phone:                    <a href="tel:+41435003980" class="link-text">+41 43 500 39 80</a><br>
+                                                    </address>
+                                  <a href="https://www.google.ch/maps/place/Liip+AG/@47.3861445,8.5270333,17z/data=!3m1!4b1!4m5!3m4!1s0x47900a171eb6d28d:0x9e78386020738294!8m2!3d47.3861445!4d8.529222?hl=en" class="address__map-link">Directions</a>
+                              </div>
+                          <div class="hidden" data-address-block="5">
+                <address class="address__body">
+                  Vadianstrasse 25A<br>
+                                    CH-9000 St. Gallen<br>
+                                      Phone:                    <a href="tel:+41715771337" class="link-text">+41 71 577 13 37</a><br>
+                                                    </address>
+                                  <a href="https://www.google.ch/maps/place/Liip+AG/@47.4217033,9.3692739,17z/data=!4m5!3m4!1s0x479b1e4b98a711c1:0x369b70f01bcdd979!8m2!3d47.4217033!4d9.3714626?hl=en" class="address__map-link">Directions</a>
+                              </div>
+                      </article>
+        </div>
+      </div>
+    </div>
+
+    <hr class="mrgv0">
+
+    <div class="section pdgv md-pdgv+">
+      <div class="section__body">
+        <ul class="list-inline list-inline--tight list-inline--center">
+                      <li class="mrgv-- mrgh- md-mrgh">
+              <a href="https://www.liip.ch/en/jobs" class="btn btn--bare track-jobs-footer">Jobs</a>
+            </li>
+                    <li class="mrgv-- mrgh- md-mrgh">
+            <a href="mailto:contact@liip.ch" class="btn btn--bare">Contact</a>
+          </li>
+          <li class="mrgv-- mrgh- md-mrgh">
+            <a href="https://press.liip.ch" class="btn btn--bare">Media</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="mrgv0">
+
+    <div class="section">
+      <div class="section__body">
+        <div class="grid grid--large grid--middle grid--multiline">
+          <div class="grid__item sm-w-1/2 lg-w-2/3">
+            <ul class="actions">
+              <li>
+                <span>
+                  <label for="language-switcher" class="visible-sr">Language</label>
+                  <select class="language-switcher field" id="language-switcher">
+                                          <option value="https://www.liip.ch/en/blog/sentiment-detection-with-keras-word-embeddings-and-lstm-deep-learning-networks" selected>
+                        English                      </option>
+                                          <option value="https://www.liip.ch/de/blog/sentiment-detection-with-keras-word-embeddings-and-lstm-deep-learning-networks">
+                        Deutsch                      </option>
+                                          <option value="https://www.liip.ch/fr/blog/sentiment-detection-with-keras-word-embeddings-and-lstm-deep-learning-networks">
+                        Fran&ccedil;ais                      </option>
+                                      </select>
+                </span>
+              </li>
+            </ul>
+          </div>
+          <div class="grid__item sm-w-1/2 lg-w-1/3">
+            <ul class="list-inline list-inline--justified">
+              <li>
+                <a href="https://www.facebook.com/liipag" class="link-text" title="Facebook">
+                  <svg class="icon icon--facebook icon--100 md-icon--150" aria-hidden="true" focusable="false">
+  <use xlink:href="/assets/dist/icons.1553239428.svg#facebook"></use>
+</svg>                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/liip" class="link-text" title="Twitter">
+                  <svg class="icon icon--twitter icon--100 md-icon--150" aria-hidden="true" focusable="false">
+  <use xlink:href="/assets/dist/icons.1553239428.svg#twitter"></use>
+</svg>                </a>
+              </li>
+              <li>
+                <a href="https://www.instagram.com/liip_ch" class="link-text" title="Instagram">
+                  <svg class="icon icon--instagram icon--100 md-icon--150" aria-hidden="true" focusable="false">
+  <use xlink:href="/assets/dist/icons.1553239428.svg#instagram"></use>
+</svg>                </a>
+              </li>
+              <li>
+                <a href="https://github.com/liip" class="link-text" title="GitHub">
+                  <svg class="icon icon--github icon--100 md-icon--150" aria-hidden="true" focusable="false">
+  <use xlink:href="/assets/dist/icons.1553239428.svg#github"></use>
+</svg>                </a>
+              </li>
+              <li>
+                <a href="https://www.linkedin.com/company/267051" class="link-text" title="LinkedIn">
+                  <svg class="icon icon--linkedin icon--100 md-icon--150" aria-hidden="true" focusable="false">
+  <use xlink:href="/assets/dist/icons.1553239428.svg#linkedin"></use>
+</svg>                </a>
+              </li>
+                              <li>
+                  <a href="https://www.liip.ch/en/feed" class="link-text" title="Liip Blog">
+                    <svg class="icon icon--rss icon--100 md-icon--150" aria-hidden="true" focusable="false">
+  <use xlink:href="/assets/dist/icons.1553239428.svg#rss"></use>
+</svg>                  </a>
+                </li>
+                          </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="text/javascript">
+    var Liip = {
+      locale: 'en',
+      i18n: {
+        weekdays: ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]      }
+    };
+  </script>
+  <script src="/assets/dist/common.1553239428.js"></script>    </body>
+</html>
